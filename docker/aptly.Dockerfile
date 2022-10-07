@@ -28,9 +28,7 @@ COPY files/*.sh /usr/local/bin/
 COPY files/entrypoint.sh /entrypoint.sh
 
 # Enable Aptly Bash completions
-RUN wget https://raw.githubusercontent.com/aptly-dev/aptly/v$APTLY_VERSION/completion.d/aptly \
-  -O /etc/bash_completion.d/aptly \
-  && echo "if ! shopt -oq posix; then\n\
+RUN echo "if ! shopt -oq posix; then\n\
   if [ -f /usr/share/bash-completion/bash_completion ]; then\n\
     . /usr/share/bash-completion/bash_completion\n\
   elif [ -f /etc/bash_completion ]; then\n\
