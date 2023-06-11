@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:bookworm
 
 MAINTAINER dev@mirantis.com
 
@@ -11,15 +11,20 @@ RUN apt-get -q update                     \
     && apt-get -y install bash-completion \
                           bzip2           \
                           gnupg1          \
+                          gpg             \
                           gpgv            \
                           gpgv1           \
                           graphviz        \
                           wget            \
                           xz-utils        \
-                          gosu            \
-    && echo "deb http://repo.aptly.info/ $DIST main" > /etc/apt/sources.list.d/aptly.list \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A0546A43624A8331 \
-    && apt-get update \
+                          gosu
+
+RUN wget -qO- https://www.aptly.info/pubkey.txt | gpg --dearmor | \
+      tee /etc/apt/keyrings/aptly.gpg >/dev/null \
+    && echo "deb [ signed-by=/etc/apt/keyrings/aptly.gpg ] http://repo.aptly.info/ $DIST main" \
+      >> /etc/apt/sources.list.d/aptly.list
+
+RUN apt-get update \
     && apt-get -y install aptly=$APTLY_VERSION \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
